@@ -8,8 +8,10 @@ Our layout:
 
 # how-to-run    
 `pip install -r requirements.txt`
+
 `python app.py`
+
 `Visit http://localhost:5000`
 
 # goals
-Get this to run by the week of 10/15!
+Get this to run by the week of 10/15 🎊🎉!
