@@ -3,7 +3,7 @@
 Our layout:
 * static -- css, js, and images
 * templates -- html files
-* spooky.py -- the quantum effects!
+* quantum.py -- the quantum effects!
 * app.py -- runs the website (we use Flask)
 
 # how-to-run    

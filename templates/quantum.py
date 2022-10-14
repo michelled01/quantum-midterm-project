@@ -13,15 +13,23 @@ import qiskit
 import numpy as np
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit import Aer, execute
+from flask import Flask, render_template
 
-spooky_route = Blueprint("spooky_route", __name__)
+quantum_route = Blueprint("quantum_route", __name__, template_folder='templates')
+
+@quantum_route.route('/')
+def index():
+    return render_template('index.html')    
 
 numQubits = 6
 qc = QuantumCircuit(6,1)
 superpositions = {}
 
-quibitID = request.json['params']['cell']
-print("cell number from python:", quibitID)
+
+def getQubit():
+  quibitID = request.json['params']['cell']
+  print("cell number from python:", quibitID)
+
 
 def allocateQubit(index):
   qc.h(index)
