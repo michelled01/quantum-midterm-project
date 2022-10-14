@@ -8,15 +8,20 @@ Original file is located at
 """
 
 
-
+from flask import Blueprint, request, jsonify
 import qiskit
 import numpy as np
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit import Aer, execute
 
+spooky_route = Blueprint("spooky_route", __name__)
+
 numQubits = 6
 qc = QuantumCircuit(6,1)
 superpositions = {}
+
+quibitID = request.json['params']['cell']
+print("cell number from python:", quibitID)
 
 def allocateQubit(index):
   qc.h(index)
