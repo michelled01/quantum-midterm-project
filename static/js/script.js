@@ -1,7 +1,7 @@
 function selectCell(cell) {
     console.log("cell number" + cell.toString());
     // pass the cell number to Python
-    axios.post('/', {
+    axios.post('/quantum', {
         params: {
             cell,
         }
