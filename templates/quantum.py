@@ -26,7 +26,9 @@ qc = QuantumCircuit(6,1)
 superpositions = {}
 
 
+@quantum_route.route('/quantum')
 def getQubit():
+  print("test function getQubit")
   quibitID = request.json['params']['cell']
   print("cell number from python:", quibitID)
 
