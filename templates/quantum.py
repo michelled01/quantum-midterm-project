@@ -17,20 +17,25 @@ from flask import Flask, render_template
 
 quantum_route = Blueprint("quantum_route", __name__, template_folder='templates')
 
-@quantum_route.route('/')
+@quantum_route.route('/', methods=['GET','POST'])
 def index():
-    return render_template('index.html')    
+  print("test function getQubit")
+  
+  if request.json is None:
+    quibitID = -1
+  else:
+    quibitID = request.json['params']['cell']
+  
+  print("cell number from python:", quibitID) 
+  return render_template('index.html')    
 
 numQubits = 6
 qc = QuantumCircuit(6,1)
 superpositions = {}
 
 
-@quantum_route.route('/quantum')
-def getQubit():
-  print("test function getQubit")
-  quibitID = request.json['params']['cell']
-  print("cell number from python:", quibitID)
+#@quantum_route.route('/quantum')
+
 
 
 def allocateQubit(index):
