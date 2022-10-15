@@ -36,7 +36,12 @@ def getQubit():
     quibitID = request.json['params']['cell']
   
   print("cell number from python:", quibitID)
-  return "qubit received"
+  return "qubit received "+str(quibitID)
+
+#@quantum_route.route('/quantumReturn', methods=['GET','POST'])
+#def value():
+  #print("cell number from python:", quibitID)
+  #return "qubit received"
 
 
 def allocateQubit(index):

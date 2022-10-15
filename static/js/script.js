@@ -11,9 +11,11 @@ function selectCell(cell) {
         }
     })
     .then(res => {
-
+        console.log(res.data);
     })
     .catch(err => console.error(err));
+
+    
 }
 
 
