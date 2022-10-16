@@ -13,10 +13,6 @@ document.addEventListener("DOMContentLoaded", loadDOM)
 function loadDOM() {
     player.innerHTML = currentPlayer
     playAgain.addEventListener("click", reset)
-    // var cell = document.getElementsByClassName('cell');
-    // Array.from(cell).forEach(square => {
-    //     square.addEventListener("click", selectCell)
-    // })
 }
 
 function selectCell(cell) {
@@ -63,17 +59,16 @@ function checkWon() {
         let square = winningArray[y]
         if (square.every(q => document.querySelector("#cell" + q).classList.contains("player1"))) {
             setTimeout(() => alert("player one (red) wins"), 200)
-            setTimeout(() =>  {reset()}, "1000")
+            setTimeout(() => {reset()}, "1000")
         } else if (square.every(q => document.querySelector("#cell" + q).classList.contains("player2"))) {
             setTimeout(() => alert("player two (blue) wins"), 200)
-            setTimeout(() =>  {reset()}, "1000")
+            setTimeout(() => reset(), 1000)
         }
     }
 }
 function reset() {
     for (let i = 0; i < 16; i++) {        
-        var myid = "#cell" + i;
-        document.querySelector(myid).className = "cell";
+        document.querySelector("#cell" + i).className = "cell";
     }
     loadDOM()
 }
