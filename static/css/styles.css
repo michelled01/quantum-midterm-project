@@ -8,7 +8,7 @@
   width: 415px;
   height: 360px;
   padding: 10px;
-  background: #414141;
+  background: #22313F;
   border: 1px solid #0044AA;
   border-radius: 5px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
@@ -34,24 +34,22 @@
 
 .player1 {
   display: table-cell;
-  /* background-color: white; */
+  background-color: #C0392B;
   width: 50px;
   height: 50px;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
   margin: 2px;
-  background-color: red;
 }
 
 .player2 {
   display: table-cell;
-  /* background-color: white; */
+  background-color: #1E8BC3;
   width: 50px;
   height: 50px;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
   margin: 2px;
-  background-color: blue;
 }
