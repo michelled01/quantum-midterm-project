@@ -33,7 +33,7 @@ def getQubit():
   if request.json is None:
     quibitID = -1
   else:
-    quibitID = request.json['params']['cell']
+    quibitID = request.json['params']['qubitIndex']
   
   print("cell number from python:", quibitID)
   return "qubit received "+str(quibitID)
