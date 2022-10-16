@@ -10,10 +10,6 @@
   <link rel="stylesheet" href="/static/css/normalize.css" />
   <link rel="stylesheet" href="/static/css/styles.css" />
   <link rel="stylesheet" href="/build/bundle.css" />
-  
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script defer src="/build/bundle.js"></script>
-  <script src="/static/js/script.js"></script>
 </head>
 
 <body>
@@ -23,32 +19,36 @@
   <h2>Board</h2>
   <div class="board"> 
     <div class="row">
-    <div class="cell" id="cell00" onclick="selectCell(12)"></div> 
-    <div class="cell" id="cell01" onclick="selectCell(13)"></div> 
-    <div class="cell" id="cell02" onclick="selectCell(14)"></div>
-    <div class="cell" id="cell03" onclick="selectCell(15)"></div>
+    <div class="cell" id="cell12" onclick="selectCell(12)"></div> 
+    <div class="cell" id="cell13" onclick="selectCell(13)"></div> 
+    <div class="cell" id="cell14" onclick="selectCell(14)"></div>
+    <div class="cell" id="cell15" onclick="selectCell(15)"></div>
     </div>
     <div class="row">
-    <div class="cell" id="cell04" onclick="selectCell(8)"></div> 
-    <div class="cell" id="cell05" onclick="selectCell(9)"></div> 
-    <div class="cell" id="cell06" onclick="selectCell(10)"></div>
-    <div class="cell" id="cell07" onclick="selectCell(11)"></div>
+    <div class="cell" id="cell8" onclick="selectCell(8)"></div> 
+    <div class="cell" id="cell9" onclick="selectCell(9)"></div> 
+    <div class="cell" id="cell10" onclick="selectCell(10)"></div>
+    <div class="cell" id="cell11" onclick="selectCell(11)"></div>
     </div>
     <div class="row">
-    <div class="cell" id="cell08" onclick="selectCell(4)"></div> 
-    <div class="cell" id="cell09" onclick="selectCell(5)"></div> 
-    <div class="cell" id="cell10" onclick="selectCell(6)"></div>
-    <div class="cell" id="cell11" onclick="selectCell(7)"></div>
+    <div class="cell" id="cell4" onclick="selectCell(4)"></div> 
+    <div class="cell" id="cell5" onclick="selectCell(5)"></div> 
+    <div class="cell" id="cell6" onclick="selectCell(6)"></div>
+    <div class="cell" id="cell7" onclick="selectCell(7)"></div>
     </div>
     <div class="row">
-    <div class="cell" id="cell12" onclick="selectCell(0)"></div> 
-    <div class="cell" id="cell13" onclick="selectCell(1)"></div> 
-    <div class="cell" id="cell14" onclick="selectCell(2)"></div>
-    <div class="cell" id="cell15" onclick="selectCell(3)"></div>
+    <div class="cell" id="cell0" onclick="selectCell(0)"></div> 
+    <div class="cell" id="cell1" onclick="selectCell(1)"></div> 
+    <div class="cell" id="cell2" onclick="selectCell(2)"></div>
+    <div class="cell" id="cell3" onclick="selectCell(3)"></div>
     </div>
   </div>
   
   <div class="restart">
   <button class="playAgain">play again</button>
 </body>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script defer src="/build/bundle.js"></script>
+<script src="/static/js/script.js"></script>
 </html>

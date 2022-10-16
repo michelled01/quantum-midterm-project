@@ -11,10 +11,10 @@ document.addEventListener("DOMContentLoaded", loadDOM)
 function loadDOM() {
     player.innerHTML = currentPlayer
     // playAgain.addEventListener("click", reset)
-    var cell = document.getElementsByClassName('cell');
-    Array.from(cell).forEach(square => {
-        square.addEventListener("click", selectCell)
-    })
+    // var cell = document.getElementsByClassName('cell');
+    // Array.from(cell).forEach(square => {
+    //     square.addEventListener("click", selectCell)
+    // })
 }
 
 function selectCell(cell) {
@@ -29,22 +29,27 @@ function selectCell(cell) {
             'Content-Type': 'application/json'
         }
     })
-        .then(res => {
-            console.log(res.data);
-        })
-        .catch(err => console.error(err));
+    .then(res => {
+        console.log(res.data);
+    })
+    .catch(err => console.error(err));
 
         
     if (currentPlayer === 1) {
+        // alert("current player is 1")
         currentPlayer = 2
         player.innerHTML = currentPlayer
-        this.className = "player-one taken"
-        checkWon()
+        var myid = "#cell" + cell;
+        document.querySelector(myid).className = "player1";
+        console.log(this)
+        // checkWon()
     } else if (currentPlayer === 2) {
+        // alert("current player is 2")
         currentPlayer = 1
         player.innerHTML = currentPlayer
-        this.className = "player-two taken"
-        checkWon()
+        var myid = "#cell" + cell;
+        document.querySelector(myid).className = "player2";
+        // checkWon()
     }
     if (box === 42) {
         setTimeout(() => alert("boxes filled"), 300)
