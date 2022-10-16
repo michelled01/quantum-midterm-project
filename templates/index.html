@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <title>Quantum Connect Four</title>
+  <title>Quantum Connect Four</title>
 
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="stylesheet" href="/static/css/normalize.css" />
-    <link rel="stylesheet" href="/static/css/styles.css" />
-    <link rel="stylesheet" href="/build/bundle.css" />
-    
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script defer src="/build/bundle.js"></script>
-    <script src="/static/js/script.js"></script>
-  </head>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="stylesheet" href="/static/css/normalize.css" />
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <link rel="stylesheet" href="/build/bundle.css" />
+  
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script defer src="/build/bundle.js"></script>
+  <script src="/static/js/script.js"></script>
+</head>
 
-  <body>
-    <h2>Board</h2>
-    <div id="grid"> 
+<body>
+  <div class="currentPlayer center">The current player is 
+  <span class="player"></span>
+
+  <h2>Board</h2>
+  <div class="board"> 
     <div class="row">
     <div class="cell" id="cell00" onclick="selectCell(12)"></div> 
     <div class="cell" id="cell01" onclick="selectCell(13)"></div> 
@@ -43,5 +46,9 @@
     <div class="cell" id="cell14" onclick="selectCell(2)"></div>
     <div class="cell" id="cell15" onclick="selectCell(3)"></div>
     </div>
-    </body>
+  </div>
+  
+  <div class="restart">
+  <button class="playAgain">play again</button>
+</body>
 </html>
