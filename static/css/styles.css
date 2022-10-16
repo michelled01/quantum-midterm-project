@@ -33,9 +33,25 @@
 }
 
 .player1 {
+  display: table-cell;
+  /* background-color: white; */
+  width: 50px;
+  height: 50px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  margin: 2px;
   background-color: red;
 }
 
 .player2 {
+  display: table-cell;
+  /* background-color: white; */
+  width: 50px;
+  height: 50px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  margin: 2px;
   background-color: blue;
 }
