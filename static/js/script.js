@@ -8,6 +8,7 @@ let winningArray = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],
                     [0,5,10,15],[3,6,9,12]];
 let currentPlayer = 1
 document.addEventListener("DOMContentLoaded", loadDOM)
+let column = [0,1,2,3] // the lowest available cells in each column
 
 class Qubit {
 
@@ -29,7 +30,7 @@ let currentMove = -1
 let cellsToSelect = 0
 let selected = []
 
-//load dom function
+// load dom function
 function loadDOM() {
     player.innerHTML = currentPlayer
 
@@ -39,9 +40,6 @@ function loadDOM() {
 
     playAgain.addEventListener("click", reset)
 }
-
-
-
 
 function moveType(typeID) {
 
@@ -89,11 +87,18 @@ function addQubit() {
     q.owner = currentPlayer
 
     class_name = q.owner==1 ? "player1_superpos" : "player2_superpos"
-    document.querySelector("#cell"+q.zeroCell).className = class_name
-    document.querySelector("#cell"+q.oneCell).className = class_name
     
-    document.querySelector("#cell" + q.zeroCell).innerHTML = "&lt;0&gt;<sub>" + qubitIndex + "</sub>"
-    document.querySelector("#cell" + q.oneCell).innerHTML = "&lt;1&gt;<sub>" + qubitIndex + "</sub>"
+    var zeroLowestCell = column[q.zeroCell%4]
+    var oneLowestCell = column[q.oneCell%4]
+
+    document.querySelector("#cell"+zeroLowestCell).className = class_name
+    document.querySelector("#cell"+oneLowestCell).className = class_name
+    
+    document.querySelector("#cell" + zeroLowestCell).innerHTML = "&lt;0&gt;<sub>" + qubitIndex + "</sub>"
+    document.querySelector("#cell" + oneLowestCell).innerHTML = "&lt;1&gt;<sub>" + qubitIndex + "</sub>"
+    
+    column[q.zeroCell%4] += 4
+    column[q.oneCell%4] += 4
 
     axios.post('/quantum', {
         params: {
@@ -108,17 +113,16 @@ function addQubit() {
         console.log(res.data);
     })
     .catch(err => console.error(err));
-
-
 }
 
+// select a cell
 function selectCell(cell) {
 
     console.log("cell number" + cell.toString());
 
     if(currentMove === -1) {
-        var myid = "#cell" + cell;
-        var myCell = document.querySelector(myid)
+        var lowestCell = column[cell%4]
+        var myCell = document.querySelector("#cell" + lowestCell)
         if (myCell.className == "cell") {
             if (currentPlayer === 1) {
                 currentPlayer = 2
@@ -137,6 +141,7 @@ function selectCell(cell) {
                 setTimeout(() => alert("boxes filled"), 300)
                 setTimeout(() => reset(), 1000)
             }
+            column[cell%4] += 4
         }
         return
     }
@@ -145,7 +150,7 @@ function selectCell(cell) {
     selected.push(cell)
     cellsToSelect -= 1
 
-    if(cellsToSelect === 0) { //last remaining cell
+    if(cellsToSelect === 0) { // last remaining cell
 
         if(currentMove === 1) {
             addQubit()
@@ -167,20 +172,20 @@ function selectCell(cell) {
 
     }
         
-    if (box === 42) {
+    if (box === 16) {
         setTimeout(() => alert("boxes filled"), 300)
-        setTimeout(() => restart.style.display = "flex", 500)
+        setTimeout(() => reset(), 1000)
     }
 }
 
-//the checkWon function
+// check for any winning positions
 function checkWon() {
     // let cell = document.querySelectorAll(".board div")
     for (let y = 0; y < winningArray.length; y++) {
         let square = winningArray[y]
         if (square.every(q => document.querySelector("#cell" + q).classList.contains("player1"))) {
             setTimeout(() => alert("player one (red) wins"), 200)
-            setTimeout(() => {reset()}, "1000")
+            setTimeout(() => reset(), 1000)
         } else if (square.every(q => document.querySelector("#cell" + q).classList.contains("player2"))) {
             setTimeout(() => alert("player two (blue) wins"), 200)
             setTimeout(() => reset(), 1000)

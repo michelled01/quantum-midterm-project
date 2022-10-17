@@ -89,13 +89,3 @@ def measure(index):
   else:
     qc.x(index)
     return 1
-
-hadamard(3)
-hadamard(4)
-hadamard(4)
-xGate(4)
-xGate(3)
-cnot(3,4)
-
-print(measure(4))
-
