@@ -92,6 +92,9 @@ function addQubit() {
     document.querySelector("#cell"+q.zeroCell).className = class_name
     document.querySelector("#cell"+q.oneCell).className = class_name
 
+    document.querySelector("#cell" + q.zeroCell).innerHTML = "&lt;0&gt;<sub>" + qubitIndex + "</sub>"
+    document.querySelector("#cell" + q.oneCell).innerHTML = "&lt;1&gt;<sub>" + qubitIndex + "</sub>"
+
     axios.post('/quantum', {
         params: {
             qubitIndex,
@@ -166,7 +169,7 @@ function checkWon() {
 function reset() {
     for (let i = 0; i < 16; i++) {        
         document.querySelector("#cell" + i).className = "cell";
-
+        document.querySelector("#cell" + i).innerHTML = "";
     }
     
     qubits = new Array(6)
