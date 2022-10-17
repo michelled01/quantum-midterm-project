@@ -14,11 +14,15 @@
 
 <body>
   <br><br><br>
-  <div class="currentPlayer center"><h2>The current player is 
+  <div style="color:rgb(251, 255, 182);" class="currentPlayer center"><h2>The current player is 
   <span class="player"></span></h2>
 
-  <h1>Quantum Connect Four</h1><br>
+  <h1 style="color:rgb(251, 255, 182);">Quantum Connect Four</h1><br>
   <button onclick="moveType(1)" class="button">Add Qubit</button>
+  <button onclick="moveType(2)" class="button">Measure Qubit</button><br>
+  <button onclick="moveType(3)" class="button">X Gate</button>
+  <button onclick="moveType(4)" class="button">Z Gate</button>
+  <button onclick="moveType(5)" class="button">H Gate</button>
   <div class="board"> 
     <div class="row">
     <div class="cell" id="cell12" onclick="selectCell(12)"></div> 
@@ -49,6 +53,10 @@
   <div class="restart">
   <button class="playAgain button">play again</button>
   </div>
+
+  <br><br><br>
+
+  <img src="static/images/circuit.png" id="circuit" alt="Game Circuit">
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

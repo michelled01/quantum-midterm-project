@@ -45,8 +45,12 @@ function moveType(typeID) {
 
     currentMove = typeID;
 
-    if(typeID==1) {
+    if(typeID===1) {
         cellsToSelect = 2;
+    } else if(typeID===2) {
+        cellsToSelect = 1;
+    } else if(typeID===3) {
+        cellsToSelect = 1;
     }
 
 }
@@ -82,25 +86,28 @@ function addQubit() {
 
     q = qubits[qubitIndex]
 
-    q.zeroCell = selected[0]
-    q.oneCell = selected[1]
+    var zeroLowestCell = column[selected[0]%4]
+    column[selected[0]%4] += 4
+    var oneLowestCell = column[selected[1]%4]
+    column[selected[1]%4] += 4
+
+    q.zeroCell = zeroLowestCell
+    q.oneCell = oneLowestCell
     q.owner = currentPlayer
 
     class_name = q.owner==1 ? "player1_superpos" : "player2_superpos"
-    
-    var zeroLowestCell = column[q.zeroCell%4]
-    var oneLowestCell = column[q.oneCell%4]
 
-    document.querySelector("#cell"+zeroLowestCell).className = class_name
-    document.querySelector("#cell"+oneLowestCell).className = class_name
-    
-    document.querySelector("#cell" + zeroLowestCell).innerHTML = "&lt;0&gt;<sub>" + qubitIndex + "</sub>"
-    document.querySelector("#cell" + oneLowestCell).innerHTML = "&lt;1&gt;<sub>" + qubitIndex + "</sub>"
-    
-    column[q.zeroCell%4] += 4
-    column[q.oneCell%4] += 4
 
-    axios.post('/quantum', {
+    
+    document.querySelector("#cell"+q.zeroCell).className = class_name
+    document.querySelector("#cell"+q.oneCell).className = class_name
+    
+    document.querySelector("#cell" + q.zeroCell).innerHTML = "&lt;0&gt;<sub>" + qubitIndex + "</sub>"
+    document.querySelector("#cell" + q.oneCell).innerHTML = "&lt;1&gt;<sub>" + qubitIndex + "</sub>"
+
+    
+
+    axios.post('/initializeQubit', {
         params: {
             qubitIndex,
         }
@@ -113,9 +120,97 @@ function addQubit() {
         console.log(res.data);
     })
     .catch(err => console.error(err));
+
 }
 
-// select a cell
+function measureQubit() {
+
+    qubitIndex = -1
+
+    for(i=0; i<qubits.length; i++) {
+        if(qubits[i].owner==currentPlayer && (qubits[i].zeroCell===selected[0] || qubits[i].oneCell===selected[0])) {
+            qubitIndex = i
+            break
+        }
+    }
+
+    if(qubitIndex === -1) {
+        alert("cannot measure something which is not your qubit")
+        resetMove()
+        return
+    }
+
+
+    q = qubits[qubitIndex];
+    result = -1
+
+    axios.post('/measureQubit', {
+        params: {
+            qubitIndex,
+        }
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(res => {
+        result = res.data
+
+        playerName = q.owner==1 ? "player1" : "player2"
+    
+        document.querySelector("#cell" + q.zeroCell).className = result==0 ? playerName : "cell";
+        document.querySelector("#cell" + q.oneCell).className = result==1 ? playerName : "cell";
+        
+        document.querySelector("#cell" + q.zeroCell).innerHTML = ""
+        document.querySelector("#cell" + q.oneCell).innerHTML = ""
+
+        qubits[qubitIndex] = new Qubit();
+        checkWon()
+    })
+    .catch(err => console.error(err));
+
+    
+
+}
+
+function gate(gateID) { //0 = X, 1 = Z, 2 = H
+
+    qubitIndex = -1
+
+    for(i=0; i<qubits.length; i++) {
+        if(qubits[i].owner==currentPlayer && (qubits[i].zeroCell===selected[0] || qubits[i].oneCell===selected[0])) {
+            qubitIndex = i
+            break
+        }
+    }
+
+    if(qubitIndex === -1) {
+        alert("cannot apply a gate to something which is not your qubit")
+        resetMove()
+        return
+    }
+
+    //q = qubits[qubitIndex];
+
+    axios.post('/applyGate', {
+        params: {
+            qubitIndex,
+            gateID,
+        }
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(res => {
+        console.log(res.data)
+    })
+    .catch(err => console.error(err));
+
+    
+
+}
+
 function selectCell(cell) {
 
     console.log("cell number" + cell.toString());
@@ -146,7 +241,6 @@ function selectCell(cell) {
         return
     }
 
-
     selected.push(cell)
     cellsToSelect -= 1
 
@@ -157,7 +251,19 @@ function selectCell(cell) {
             if(currentMove === -1) {
                 return
             }
+        } else if(currentMove === 2) {
+            measureQubit()
+            if(currentMove === -1) {
+                return
+            }
+        } else if(currentMove >= 3) {
+            gate(currentMove-3)
+            if(currentMove === -1) {
+                return
+            }
         }
+
+        console.log("player " + currentPlayer)
 
         if(currentPlayer === 1) {
             currentPlayer = 2
@@ -165,11 +271,13 @@ function selectCell(cell) {
             currentPlayer = 1
         }
 
+        console.log("player " + currentPlayer)
+
         currentMove = -1
         selected = []
         player.innerHTML = currentPlayer
         
-
+        //document.querySelector("circuit").src = "static/images/circuit.png?" + new Date().getTime()
     }
         
     if (box === 16) {

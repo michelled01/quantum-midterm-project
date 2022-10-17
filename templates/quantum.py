@@ -12,13 +12,17 @@ from flask import Blueprint, request, jsonify
 import qiskit
 import numpy as np
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.quantum_info import partial_trace, Statevector
 from qiskit import Aer, execute
+from matplotlib import pyplot as plt
 from flask import Flask, render_template
 
 quantum_route = Blueprint("quantum_route", __name__, template_folder='templates')
 
 @quantum_route.route('/', methods=['GET','POST'])
 def index():  
+  qc.draw(output="mpl")
+  plt.savefig("static/images/circuit.png")
   return render_template('index.html')    
 
 numQubits = 6
@@ -26,35 +30,57 @@ qc = QuantumCircuit(6,1)
 superpositions = {}
 
 
-@quantum_route.route('/quantum', methods=['GET','POST'])
-def getQubit():
-  print(request)
+@quantum_route.route('/initializeQubit', methods=['GET','POST'])
+def start():
 
-  if request.json is None:
-    quibitID = -1
-  else:
-    quibitID = request.json['params']['qubitIndex']
-  
-  print("cell number from python:", quibitID)
-  return "qubit received "+str(quibitID)
+  ind = -1
+  if not request.json is None:
+    ind = request.json['params']['qubitIndex']
+    qc.h(ind)
+    qc.draw(output="mpl")
+    plt.savefig("static/images/circuit.png")
+
+  return "qubit initialized "+str(ind)
+
+@quantum_route.route('/measureQubit', methods=['GET','POST'])
+def measure():
+  ind = -1
+  if not request.json is None:
+    ind = request.json['params']['qubitIndex']
+    res = str(measure(ind))
+    print(res)
+
+    qc.draw(output="mpl")
+    plt.savefig("static/images/circuit.png")
+
+    return res
+  return "no measurement"
+
+@quantum_route.route('/applyGate', methods=['GET','POST'])
+def applyGate():
+  ind = -1
+  if not request.json is None:
+    ind = request.json['params']['qubitIndex']
+    gateID = request.json['params']['gateID']
+
+    if(gateID==0):
+      qc.x(ind)
+    elif(gateID==1):
+      qc.z(ind)
+    elif(gateID==2):
+      qc.h(ind)
+    
+    qc.draw(output="mpl")
+    plt.savefig("static/images/circuit.png")
+    return "applied gate"
+
+  return "no input"
 
 #@quantum_route.route('/quantumReturn', methods=['GET','POST'])
 #def value():
   #print("cell number from python:", quibitID)
   #return "qubit received"
 
-
-def allocateQubit(index):
-  qc.h(index)
-
-def hadamard(index):
-  qc.h(index)
-
-def xGate(index):
-  qc.x(index)
-
-def zGate(index):
-  qc.z(index)
 
 def cnot(control,target):
   if control in superpositions or target in superpositions:
@@ -82,6 +108,7 @@ def measure(index):
     return 0
   
   if not '0' in result_string:
+    qc.x(index)
     return 1
 
   if result_string['0']>=result_string['1']:
@@ -89,3 +116,6 @@ def measure(index):
   else:
     qc.x(index)
     return 1
+
+
+
