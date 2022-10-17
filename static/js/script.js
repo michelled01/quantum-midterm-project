@@ -127,13 +127,13 @@ function selectCell(cell) {
             if (currentPlayer === 1) {
                 currentPlayer = 2
                 player.innerHTML = currentPlayer
-                myCell.className = "player1 taken";
+                myCell.className = "player1";
                 box+=1
                 checkWon()
             } else if (currentPlayer === 2) {
                 currentPlayer = 1
                 player.innerHTML = currentPlayer
-                myCell.className = "player2 taken";
+                myCell.className = "player2";
                 box+=1
                 checkWon()
             }
