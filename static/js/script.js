@@ -91,7 +91,7 @@ function addQubit() {
     class_name = q.owner==1 ? "player1_superpos" : "player2_superpos"
     document.querySelector("#cell"+q.zeroCell).className = class_name
     document.querySelector("#cell"+q.oneCell).className = class_name
-
+    
     document.querySelector("#cell" + q.zeroCell).innerHTML = "&lt;0&gt;<sub>" + qubitIndex + "</sub>"
     document.querySelector("#cell" + q.oneCell).innerHTML = "&lt;1&gt;<sub>" + qubitIndex + "</sub>"
 
@@ -117,9 +117,30 @@ function selectCell(cell) {
     console.log("cell number" + cell.toString());
 
     if(currentMove === -1) {
-        alert("select a move type!")
+        var myid = "#cell" + cell;
+        var myCell = document.querySelector(myid)
+        if (myCell.className == "cell") {
+            if (currentPlayer === 1) {
+                currentPlayer = 2
+                player.innerHTML = currentPlayer
+                myCell.className = "player1 taken";
+                box+=1
+                checkWon()
+            } else if (currentPlayer === 2) {
+                currentPlayer = 1
+                player.innerHTML = currentPlayer
+                myCell.className = "player2 taken";
+                box+=1
+                checkWon()
+            }
+            if (box === 16) {
+                setTimeout(() => alert("boxes filled"), 300)
+                setTimeout(() => reset(), 1000)
+            }
+        }
         return
     }
+
 
     selected.push(cell)
     cellsToSelect -= 1
