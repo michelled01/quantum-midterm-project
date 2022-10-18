@@ -159,6 +159,7 @@ def measure(index):
       val[index] = 1
     return val
 
+  #look for most likely measurement
   states = [0,0,0,0]
   for str in other_string.keys():
     if(str[5-index]+str[5-super]=="00"):

@@ -48,15 +48,15 @@ function moveType(typeID) {
     currentMove = typeID;
     selected = []
 
-    if(typeID===-1) {
+    if(typeID===-1) { //classical mode
         cellsToSelect = 0;
-    } else if(typeID===1) {
+    } else if(typeID===1) { //add qubit
         cellsToSelect = 2;
-    } else if(typeID===2) {
+    } else if(typeID===2) { //measure
         cellsToSelect = 1;
-    } else if(typeID>=3 && typeID<=5) {
+    } else if(typeID>=3 && typeID<=5) { //X, Z, H gates
         cellsToSelect = 1;
-    } else if(typeID===6) {
+    } else if(typeID===6) { //CNOT gate
         cellsToSelect = 2;
     }
 
@@ -78,7 +78,7 @@ function addQubit() {
 
     qubitIndex = -1
 
-    for(i=0; i<qubits.length; i++) {
+    for(i=0; i<qubits.length; i++) { //look for available qubit
         if(qubits[i].owner===0) {
             qubitIndex = i
             break
@@ -99,11 +99,7 @@ function addQubit() {
         return
     }
 
-    //var zeroLowestCell = column[selected[0]%4]
-    //column[selected[0]%4] += 4
-    //var oneLowestCell = column[selected[1]%4]
-    //column[selected[1]%4] += 4
-
+    //create new qubit q
     q.zeroCell = selected[0]
     q.oneCell = selected[1]
     q.owner = currentPlayer
@@ -169,7 +165,7 @@ function measureQubit() {
 
         result = res.data[qubitIndex]
 
-        playerName = q.owner==1 ? "player1" : "player2"
+        playerName = q.owner==1 ? "player1" : "player2" //make state of qubits[qubitIndex] collapse
     
         document.querySelector("#cell" + q.zeroCell).className = result==0 ? playerName : "cell";
         document.querySelector("#cell" + q.oneCell).className = result==1 ? playerName : "cell";
@@ -182,7 +178,7 @@ function measureQubit() {
         qubits[qubitIndex].oneCell = -1
 
 
-        if(q.entangled!=-1) {
+        if(q.entangled!=-1) { //make state of entangled qubit collapse
 
             ent = q.entangled
             result = res.data[ent]
@@ -215,6 +211,7 @@ function gate(gateID) { //0 = X, 1 = Z, 2 = H
 
     qubitIndex = -1
 
+    //look for qubit with given zeroCell or oneCell
     for(i=0; i<qubits.length; i++) {
         if(qubits[i].owner==currentPlayer && (qubits[i].zeroCell===selected[0] || qubits[i].oneCell===selected[0])) {
             qubitIndex = i
@@ -250,6 +247,7 @@ function cnot() {
 
     controlIndex = -1
 
+    //look for qubit with given zeroCell or oneCell
     for(i=0; i<qubits.length; i++) {
         if(qubits[i].zeroCell===selected[0] || qubits[i].oneCell===selected[0]) {
             controlIndex = i
