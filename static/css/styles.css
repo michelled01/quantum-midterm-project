@@ -96,4 +96,27 @@ h2 {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
+  width: 200px;
+}
+
+.column-wide {
+  float: left;
+  width: 70%;
+}
+
+.column-narrow {
+  display: grid;
+  grid-template-columns: 200px 200px;
+  gap: 10px;
+  float: right;
+  width: 30%;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.movetype {
+  padding-left:60%;
 }

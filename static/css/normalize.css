@@ -17,6 +17,7 @@ html {
  */
 
 body {
+  color:rgb(251, 255, 182);
   background-image: url("/static/images/image.jpg");
   background-size:cover;
   /* background-repeat: no-repeat; */

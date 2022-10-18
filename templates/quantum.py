@@ -20,13 +20,17 @@ from flask import Flask, render_template
 quantum_route = Blueprint("quantum_route", __name__, template_folder='templates')
 
 @quantum_route.route('/', methods=['GET','POST'])
-def index():
+def homepage():
+  return render_template('start.html')    
+
+@quantum_route.route('/index', methods=['GET','POST'])
+def index():  
   q = QuantumRegister(6)
   c = ClassicalRegister(1)
   qc = QuantumCircuit(q,c)
   qc.draw(output="mpl")
   plt.savefig("static/images/circuit.png")
-  return render_template('index.html')    
+  return render_template('index.html')  
 
 numQubits = 6
 q = QuantumRegister(6)

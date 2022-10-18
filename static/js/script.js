@@ -410,7 +410,7 @@ function reset() {
         document.querySelector("#cell" + i).className = "cell";
         document.querySelector("#cell" + i).innerHTML = "";
     }
-    
+    box = 0
     qubits = new Array(6)
 
     currentMove = -1
