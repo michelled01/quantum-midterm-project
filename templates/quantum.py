@@ -21,13 +21,17 @@ quantum_route = Blueprint("quantum_route", __name__, template_folder='templates'
 
 @quantum_route.route('/', methods=['GET','POST'])
 def index():
-  qc = QuantumCircuit(6,1)
+  q = QuantumRegister(6)
+  c = ClassicalRegister(1)
+  qc = QuantumCircuit(q,c)
   qc.draw(output="mpl")
   plt.savefig("static/images/circuit.png")
   return render_template('index.html')    
 
 numQubits = 6
-qc = QuantumCircuit(6,1)
+q = QuantumRegister(6)
+c = ClassicalRegister(1)
+qc = QuantumCircuit(q,c)
 superpositions = {}
 
 
@@ -48,13 +52,13 @@ def measure():
   ind = -1
   if not request.json is None:
     ind = request.json['params']['qubitIndex']
-    res = str(measure(ind))
-    print(res)
+    res = measure(ind)
 
     qc.draw(output="mpl")
     plt.savefig("static/images/circuit.png")
 
     return res
+
   return "no measurement"
 
 @quantum_route.route('/applyGate', methods=['GET','POST'])
@@ -84,7 +88,7 @@ def cnot():
     control = request.json['params']['controlIndex']
     target = request.json['params']['targetIndex']
 
-    qc.cnot(control,target)
+    cnot(control,target) #custom method (see below)
     
     qc.draw(output="mpl")
     plt.savefig("static/images/circuit.png")
@@ -107,7 +111,10 @@ def cnot(control,target):
     superpositions[target] = control
 
 def measure(index):
-  qc.measure(index, 0)
+
+  val = {}
+
+  qc.measure(q[index], c[0])
 
   backend = Aer.get_backend('qasm_simulator')
   job = execute(qc,backend, shots=1024, memory=True)
@@ -115,26 +122,56 @@ def measure(index):
   result_string = result.get_counts()
   print(result_string)
 
+  other_string = ""
+  super = -1
   if index in superpositions:
+
+    qc.measure(q[superpositions[index]], c[0])
+    super = superpositions[index]
+
+    backend = Aer.get_backend('qasm_simulator')
+    job = execute(qc,backend, shots=1024, memory=True)
+    result = job.result()
+    other_string = result.get_counts()
+    print(other_string)
+
     superpositions.pop(superpositions[index])
     superpositions.pop(index)
 
   if not '1' in result_string:
     qc.barrier(index)
-    return 0
+    val[index] = 0
   
   if not '0' in result_string:
     qc.x(index)
     qc.barrier(index)
-    return 1
+    val[index] = 1
 
   if result_string['0']>=result_string['1']:
     qc.barrier(index)
-    return 0
+    val[index] = 0
   else:
     qc.x(index)
     qc.barrier(index)
-    return 1
+    val[index] = 1
 
+  if super!=-1:
+    if not '1' in other_string:
+      qc.barrier(super)
+      val[super] = 0
+    
+    if not '0' in other_string:
+      qc.x(super)
+      qc.barrier(super)
+      val[super] = 1
 
+    if other_string['0']>=other_string['1']:
+      qc.barrier(super)
+      val[super] = 0
+    else:
+      qc.x(super)
+      qc.barrier(super)
+      val[super] = 1
+
+  return val
 

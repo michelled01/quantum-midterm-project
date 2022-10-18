@@ -93,6 +93,12 @@ function addQubit() {
 
     q = qubits[qubitIndex]
 
+    if(selected[0]==selected[1]) {
+        alert("pick two distinct cells to form a qubit")
+        resetMove()
+        return
+    }
+
     //var zeroLowestCell = column[selected[0]%4]
     //column[selected[0]%4] += 4
     //var oneLowestCell = column[selected[1]%4]
@@ -158,7 +164,8 @@ function measureQubit() {
         }
     })
     .then(res => {
-        result = res.data
+
+        result = res.data[qubitIndex]
 
         playerName = q.owner==1 ? "player1" : "player2"
     
@@ -169,6 +176,21 @@ function measureQubit() {
         document.querySelector("#cell" + q.oneCell).innerHTML = ""
 
         qubits[qubitIndex] = new Qubit();
+
+        ent = q.entangled
+        result = res.data[ent]
+        q = qubits[ent]
+
+        playerName = q.owner==1 ? "player1" : "player2"
+    
+        document.querySelector("#cell" + q.zeroCell).className = result==0 ? playerName : "cell";
+        document.querySelector("#cell" + q.oneCell).className = result==1 ? playerName : "cell";
+        
+        document.querySelector("#cell" + q.zeroCell).innerHTML = ""
+        document.querySelector("#cell" + q.oneCell).innerHTML = ""
+
+        qubits[ent] = new Qubit();
+        
         checkWon()
     })
     .catch(err => console.error(err));
