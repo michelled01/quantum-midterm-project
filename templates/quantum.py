@@ -149,9 +149,9 @@ def measure(index):
     zero = 0
     one = 1
     for str in result_string.keys():
-      if(str[index]=="0"):
+      if(str[5-index]=="0"):
         zero += result_string[str]
-      elif(str[index]=="1"):
+      elif(str[5-index]=="1"):
         one += result_string[str]
     if(zero>one):
       val[index] = 0
@@ -161,13 +161,13 @@ def measure(index):
 
   states = [0,0,0,0]
   for str in other_string.keys():
-    if(str[index]+str[super]=="00"):
+    if(str[5-index]+str[5-super]=="00"):
       states[0] += other_string[str]
-    elif(str[index]+str[super]=="01"):
+    elif(str[5-index]+str[5-super]=="01"):
       states[1] += other_string[str]
-    elif(str[index]+str[super]=="10"):
+    elif(str[5-index]+str[5-super]=="10"):
       states[2] += other_string[str]
-    elif(str[index]+str[super]=="11"):
+    elif(str[5-index]+str[5-super]=="11"):
       states[3] += other_string[str]
 
   max = -1
