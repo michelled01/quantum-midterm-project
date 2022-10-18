@@ -15,11 +15,13 @@ class Qubit {
     zeroCell;
     oneCell;
     owner;
+    entangled;
 
     constructor() {
         this.zeroCell = -1
         this.oneCel = -1
         this.owner = 0
+        this.entangled = -1
     }    
 
 }
@@ -44,13 +46,18 @@ function loadDOM() {
 function moveType(typeID) {
 
     currentMove = typeID;
+    selected = []
 
-    if(typeID===1) {
+    if(typeID===-1) {
+        cellsToSelect = 0;
+    } else if(typeID===1) {
         cellsToSelect = 2;
     } else if(typeID===2) {
         cellsToSelect = 1;
-    } else if(typeID===3) {
+    } else if(typeID>=3 && typeID<=5) {
         cellsToSelect = 1;
+    } else if(typeID===6) {
+        cellsToSelect = 2;
     }
 
 }
@@ -86,25 +93,22 @@ function addQubit() {
 
     q = qubits[qubitIndex]
 
-    var zeroLowestCell = column[selected[0]%4]
-    column[selected[0]%4] += 4
-    var oneLowestCell = column[selected[1]%4]
-    column[selected[1]%4] += 4
+    //var zeroLowestCell = column[selected[0]%4]
+    //column[selected[0]%4] += 4
+    //var oneLowestCell = column[selected[1]%4]
+    //column[selected[1]%4] += 4
 
-    q.zeroCell = zeroLowestCell
-    q.oneCell = oneLowestCell
+    q.zeroCell = selected[0]
+    q.oneCell = selected[1]
     q.owner = currentPlayer
 
     class_name = q.owner==1 ? "player1_superpos" : "player2_superpos"
 
-
-    
     document.querySelector("#cell"+q.zeroCell).className = class_name
     document.querySelector("#cell"+q.oneCell).className = class_name
     
     document.querySelector("#cell" + q.zeroCell).innerHTML = "&lt;0&gt;<sub>" + qubitIndex + "</sub>"
     document.querySelector("#cell" + q.oneCell).innerHTML = "&lt;1&gt;<sub>" + qubitIndex + "</sub>"
-
     
 
     axios.post('/initializeQubit', {
@@ -189,8 +193,7 @@ function gate(gateID) { //0 = X, 1 = Z, 2 = H
         resetMove()
         return
     }
-
-    //q = qubits[qubitIndex];
+    
 
     axios.post('/applyGate', {
         params: {
@@ -207,17 +210,90 @@ function gate(gateID) { //0 = X, 1 = Z, 2 = H
     })
     .catch(err => console.error(err));
 
-    
+}
+
+function cnot() {
+
+    controlIndex = -1
+
+    for(i=0; i<qubits.length; i++) {
+        if(qubits[i].zeroCell===selected[0] || qubits[i].oneCell===selected[0]) {
+            controlIndex = i
+            break
+        }
+    }
+
+    if(controlIndex === -1) {
+        alert("the control must be a valid qubit")
+        resetMove()
+        return
+    }
+
+    targetIndex = -1;
+
+    for(i=0; i<qubits.length; i++) {
+        if(qubits[i].owner==currentPlayer && (qubits[i].zeroCell===selected[1] || qubits[i].oneCell===selected[1])) {
+            targetIndex = i
+            break
+        }
+    }
+
+    if(targetIndex === -1) {
+        alert("the target must be one of your qubits")
+        resetMove()
+        return
+    }
+
+    if(controlIndex === targetIndex) {
+        alert("the target and control cannot be the same qubit")
+        resetMove()
+        return
+    }
+
+    control = qubits[controlIndex]
+    target = qubits[targetIndex]
+
+    if((control.entangled!=-1 && control.entangled!=targetIndex) || (target.entangled!=-1 && target.entangled!=controlIndex)) {
+        alert("cannot entangle qubits already in an entangled state")
+        resetMove()
+        return
+    }
+
+    control.entangled = targetIndex
+    target.entangled = controlIndex
+
+    axios.post('/cnot', {
+        params: {
+            controlIndex,
+            targetIndex
+        }
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(res => {
+        console.log(res.data)
+    })
+    .catch(err => console.error(err));
 
 }
 
 function selectCell(cell) {
 
-    console.log("cell number" + cell.toString());
+    //console.log("cell number" + cell.toString());
 
     if(currentMove === -1) {
-        var lowestCell = column[cell%4]
-        var myCell = document.querySelector("#cell" + lowestCell)
+
+        var myCell = document.querySelector("#cell" + cell)
+
+        if((myCell.className.includes("player2") && currentPlayer === 1) || (myCell.className.includes("player1") && currentPlayer === 2)) {
+            alert("cannot add something at an occupied position")
+            resetMove()
+            return
+        }
+        
+        //var lowestCell = column[cell%4]
         if (myCell.className == "cell") {
             if (currentPlayer === 1) {
                 currentPlayer = 2
@@ -236,7 +312,7 @@ function selectCell(cell) {
                 setTimeout(() => alert("boxes filled"), 300)
                 setTimeout(() => reset(), 1000)
             }
-            column[cell%4] += 4
+            //column[cell%4] += 4
         }
         return
     }
@@ -256,8 +332,15 @@ function selectCell(cell) {
             if(currentMove === -1) {
                 return
             }
-        } else if(currentMove >= 3) {
+        } else if(currentMove >= 3 && currentMove <= 5) {
             gate(currentMove-3)
+            <1>0
+            
+            if(currentMove === -1) {
+                return
+            }
+        } else if(currentMove === 6) {
+            cnot()
             if(currentMove === -1) {
                 return
             }

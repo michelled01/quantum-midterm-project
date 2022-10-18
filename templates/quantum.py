@@ -20,7 +20,8 @@ from flask import Flask, render_template
 quantum_route = Blueprint("quantum_route", __name__, template_folder='templates')
 
 @quantum_route.route('/', methods=['GET','POST'])
-def index():  
+def index():
+  qc = QuantumCircuit(6,1)
   qc.draw(output="mpl")
   plt.savefig("static/images/circuit.png")
   return render_template('index.html')    
@@ -76,6 +77,21 @@ def applyGate():
 
   return "no input"
 
+@quantum_route.route('/cnot', methods=['GET','POST'])
+def cnot():
+  if not request.json is None:
+
+    control = request.json['params']['controlIndex']
+    target = request.json['params']['targetIndex']
+
+    qc.cnot(control,target)
+    
+    qc.draw(output="mpl")
+    plt.savefig("static/images/circuit.png")
+    return "applied cnot gate"
+
+  return "no input"
+
 #@quantum_route.route('/quantumReturn', methods=['GET','POST'])
 #def value():
   #print("cell number from python:", quibitID)
@@ -91,7 +107,6 @@ def cnot(control,target):
     superpositions[target] = control
 
 def measure(index):
-
   qc.measure(index, 0)
 
   backend = Aer.get_backend('qasm_simulator')
@@ -105,16 +120,20 @@ def measure(index):
     superpositions.pop(index)
 
   if not '1' in result_string:
+    qc.barrier(index)
     return 0
   
   if not '0' in result_string:
     qc.x(index)
+    qc.barrier(index)
     return 1
 
   if result_string['0']>=result_string['1']:
+    qc.barrier(index)
     return 0
   else:
     qc.x(index)
+    qc.barrier(index)
     return 1
 
 
