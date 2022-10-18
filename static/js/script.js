@@ -380,6 +380,8 @@ function selectCell(cell) {
             }
         }
 
+        document.querySelector("#circuit").src = "static/images/circuit.png?" + new Date().getTime()
+
         console.log("player " + currentPlayer)
 
         if(currentPlayer === 1) {
@@ -394,7 +396,6 @@ function selectCell(cell) {
         selected = []
         player.innerHTML = currentPlayer
         
-        //document.querySelector("circuit").src = "static/images/circuit.png?" + new Date().getTime()
     }
         
     if (box === 16) {
