@@ -165,6 +165,8 @@ function measureQubit() {
     })
     .then(res => {
 
+        console.log(res.data)
+
         result = res.data[qubitIndex]
 
         playerName = q.owner==1 ? "player1" : "player2"
@@ -175,22 +177,32 @@ function measureQubit() {
         document.querySelector("#cell" + q.zeroCell).innerHTML = ""
         document.querySelector("#cell" + q.oneCell).innerHTML = ""
 
-        qubits[qubitIndex] = new Qubit();
+        qubits[qubitIndex].owner = 0
+        qubits[qubitIndex].zeroCell = -1
+        qubits[qubitIndex].oneCell = -1
 
-        ent = q.entangled
-        result = res.data[ent]
-        q = qubits[ent]
 
-        playerName = q.owner==1 ? "player1" : "player2"
-    
-        document.querySelector("#cell" + q.zeroCell).className = result==0 ? playerName : "cell";
-        document.querySelector("#cell" + q.oneCell).className = result==1 ? playerName : "cell";
+        if(q.entangled!=-1) {
+
+            ent = q.entangled
+            result = res.data[ent]
+            q = qubits[ent]
+
+            playerName = q.owner==1 ? "player1" : "player2"
         
-        document.querySelector("#cell" + q.zeroCell).innerHTML = ""
-        document.querySelector("#cell" + q.oneCell).innerHTML = ""
+            document.querySelector("#cell" + q.zeroCell).className = result==0 ? playerName : "cell";
+            document.querySelector("#cell" + q.oneCell).className = result==1 ? playerName : "cell";
+            
+            document.querySelector("#cell" + q.zeroCell).innerHTML = ""
+            document.querySelector("#cell" + q.oneCell).innerHTML = ""
 
-        qubits[ent] = new Qubit();
+            qubits[ent].owner = 0
+            qubits[ent].zeroCell = -1
+            qubits[ent].oneCell = -1
+
+        }
         
+
         checkWon()
     })
     .catch(err => console.error(err));

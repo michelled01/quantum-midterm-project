@@ -26,7 +26,7 @@ def homepage():
 @quantum_route.route('/index', methods=['GET','POST'])
 def index():  
   q = QuantumRegister(6)
-  c = ClassicalRegister(1)
+  c = ClassicalRegister(6)
   qc = QuantumCircuit(q,c)
   qc.draw(output="mpl")
   plt.savefig("static/images/circuit.png")
@@ -34,9 +34,10 @@ def index():
 
 numQubits = 6
 q = QuantumRegister(6)
-c = ClassicalRegister(1)
+c = ClassicalRegister(6)
 qc = QuantumCircuit(q,c)
 superpositions = {}
+use = [0,0,0,0,0,0]
 
 
 @quantum_route.route('/initializeQubit', methods=['GET','POST'])
@@ -45,7 +46,9 @@ def start():
   ind = -1
   if not request.json is None:
     ind = request.json['params']['qubitIndex']
-    qc.h(ind)
+    if(use[ind]==0):
+      qc.h(ind)
+    use[ind] = 1
     qc.draw(output="mpl")
     plt.savefig("static/images/circuit.png")
 
@@ -118,7 +121,7 @@ def measure(index):
 
   val = {}
 
-  qc.measure(q[index], c[0])
+  qc.measure(q[index], c[index])
 
   backend = Aer.get_backend('qasm_simulator')
   job = execute(qc,backend, shots=1024, memory=True)
@@ -128,10 +131,10 @@ def measure(index):
 
   other_string = ""
   super = -1
-  if index in superpositions:
 
-    qc.measure(q[superpositions[index]], c[0])
+  if index in superpositions:
     super = superpositions[index]
+    qc.measure(q[super], c[super])
 
     backend = Aer.get_backend('qasm_simulator')
     job = execute(qc,backend, shots=1024, memory=True)
@@ -139,43 +142,53 @@ def measure(index):
     other_string = result.get_counts()
     print(other_string)
 
-    superpositions.pop(superpositions[index])
-    superpositions.pop(index)
+    #superpositions.pop(superpositions[index])
+    #superpositions.pop(index)
 
-  if not '1' in result_string:
-    qc.barrier(index)
-    val[index] = 0
-  
-  if not '0' in result_string:
-    qc.x(index)
-    qc.barrier(index)
-    val[index] = 1
-
-  if result_string['0']>=result_string['1']:
-    qc.barrier(index)
-    val[index] = 0
-  else:
-    qc.x(index)
-    qc.barrier(index)
-    val[index] = 1
-
-  if super!=-1:
-    if not '1' in other_string:
-      qc.barrier(super)
-      val[super] = 0
-    
-    if not '0' in other_string:
-      qc.x(super)
-      qc.barrier(super)
-      val[super] = 1
-
-    if other_string['0']>=other_string['1']:
-      qc.barrier(super)
-      val[super] = 0
+  if(super==-1):
+    zero = 0
+    one = 1
+    for str in result_string.keys():
+      if(str[index]=="0"):
+        zero += result_string[str]
+      elif(str[index]=="1"):
+        one += result_string[str]
+    if(zero>one):
+      val[index] = 0
     else:
-      qc.x(super)
-      qc.barrier(super)
-      val[super] = 1
+      val[index] = 1
+    return val
+
+  states = [0,0,0,0]
+  for str in other_string.keys():
+    if(str[index]+str[super]=="00"):
+      states[0] += other_string[str]
+    elif(str[index]+str[super]=="01"):
+      states[1] += other_string[str]
+    elif(str[index]+str[super]=="10"):
+      states[2] += other_string[str]
+    elif(str[index]+str[super]=="11"):
+      states[3] += other_string[str]
+
+  max = -1
+  maxInd = -1
+  for i in range(4):
+    if(states[i]>max):
+      maxInd = i
+      max = states[i]
+  
+  if(maxInd==0):
+    val[index] = 0
+    val[super] = 0
+  elif(maxInd==1):
+    val[index] = 0
+    val[super] = 1
+  if(maxInd==2):
+    val[index] = 1
+    val[super] = 0
+  elif(maxInd==3):
+    val[index] = 1
+    val[super] = 1
 
   return val
 
