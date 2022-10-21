@@ -11,11 +11,11 @@ Our layout:
 
 `python app.py`
 
-`Visit http://localhost:5000`
+Visit `http://localhost:5000`
 
 # important-files
 * quantum.py -- uses ibm backend simulator to apply quantum gates and effects
 * script.js -- contains game logic used for clearing the board, reflecting collapsed states, etc.
-* index.html -- the main playing board
+* index.html -- displays main playing board
 * start.html -- the start page with instructions on how to play
  
